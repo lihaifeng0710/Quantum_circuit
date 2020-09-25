@@ -60,6 +60,8 @@ def choose():
         CNOT()
     elif (_NO == 3):
         Toffoli()
+    elif (_NO==4):
+        Swap()
     elif (_NO == -1):
         return 0
 

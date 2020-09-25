@@ -1,36 +1,34 @@
 import numpy as np
+Result=np.array([0,0,0])
 
-def NOT():
-    print("用矩阵表示0和1两个状态位")
-    print("1---[[0],\n\t[1]]")
-    print("0---[[1],\n\t[0]]")
-    a = int(input("请输入NOT门的一位输入:"))
+def NOT(place):
+    """
+    :param place: Result[place] 取反
+    :return:
+    """
+    a = Result[place]
     _not = np.array([[0, 1],
                      [1, 0]])
     if a == 1:
         begin = np.array([[0], [1]])
-        print("您的输入是：")
-        print("[[0],\n[1]]")
         result = np.dot(_not, begin)
     elif a == 0:
         begin = np.array([[1], [0]])
-        print("您的输入是：")
-        print("[[1],\n[0]]")
         result = np.dot(_not, begin)
     if ((result == [[1], [0]]).all()):
-        begin = 0
+        Result[place]=0
     elif ((result == [[0], [1]]).all()):
-        begin = 1
-    print("经过NOT门的转换，输出为：" + str(begin))
-    choose()
+        Result[place] = 1
+    print(Result)
 
-def CNOT():
-    print("用矩阵表示0和1两个状态位")
-    print("1---[[0],\n\t[1]]")
-    print("0---[[1],\n\t[0]]")
-    print("因为CONT门有两位，一个控制位，一个目标位，所以需要进行张量积运算")
-    control = int(input("请输入CNOT门的控制位:"))
-    target = int(input("请输入CNOT门的目标位:"))
+def CNOT(place1,place2):
+    """
+    :param place1: Result[place1]为控制位
+    :param place2: Result[place2]为目标位，当控制为1，目标为取反
+    :return:
+    """
+    control = Result[place1]
+    target = Result[place2]
     if control == 0:
         control = np.array([[1], [0]])
     elif control == 1:
@@ -46,31 +44,44 @@ def CNOT():
     product = np.kron(control, target)
     result = np.dot(cnot, product)
     if ((result == [[1], [0], [0], [0]]).all()):
-        control = 0
-        target = 0
+        Result[place1]=0
+        Result[place2]=0
     elif ((result == [[0], [1], [0], [0]]).all()):
-        control = 0
-        target = 1
+        Result[place1] = 0
+        Result[place2] = 1
     elif ((result == [[0], [0], [0], [1]]).all()):
-        control = 1
-        target = 1
+        Result[place1] = 1
+        Result[place2] = 1
     elif ((result == [[0], [0], [1], [0]]).all()):
-        control = 1
-        target = 0
-    # print(result)
-    print("经过CNOT门的转换,控制位：" + str(control))
-    print("经过CNOT门的转换,目标位：" + str(target))
-    choose()
+        Result[place1] = 1
+        Result[place2] = 0
+    print(Result)
 
-def Toffoli():
-    print("用矩阵表示0和1两个状态位")
-    print("1---[[0],\n\t[1]]")
-    print("0---[[1],\n\t[0]]")
-    print("因为Toffoli门有三位，两个控制位，一个目标位，所以需要进行张量积运算")
-    control_1 = int(input("请输入Toffoli门的第一位控制位:"))
-    control_2 = int(input("请输入Toffoli门的第二位控制位:"))
-    target = int(input("请输入Toffoli门的目标位:"))
+def Swap(place1,place2):
+    """
+    Result[place1]与Result[place2]交换
+    :param place1:
+    :param place2:
+    :return:
+    """
+    target_1 = Result[place1]
+    target_2=Result[place2]
+    temp = target_1
+    target_1 = target_2
+    target_2 = temp
+    Result[place1]=target_1
+    Result[place2]=target_2
 
+def Toffoli(place1,place2,place3):
+    """
+    :param place1: Result[place1]为控制位
+    :param place2: Result[place2]为控制位
+    :param place3: 当Result[place1]和Result[place2]都为1时，Result[place3]取反
+    :return:
+    """
+    control_1 = Result[place1]
+    control_2 = Result[place2]
+    target = Result[place3]
     if control_1 == 0 and control_2 == 0:
         control_1 = np.array([[1], [0]])
         control_2 = np.array([[1], [0]])
@@ -100,61 +111,60 @@ def Toffoli():
     product = np.kron(product, target)
     result = np.dot(Toffoli, product)
     if ((result == [[1], [0], [0], [0], [0], [0], [0], [0]]).all()):
-        control_1 = 0
-        control_2 = 0
-        target = 0
+        Result[place1]=0
+        Result[place2]=0
+        Result[place3]=0
     elif ((result == [[0], [1], [0], [0], [0], [0], [0], [0]]).all()):
-        control_1 = 0
-        control_2 = 0
-        target = 0
+        Result[place1] = 0
+        Result[place2] = 0
+        Result[place3] = 1
     elif ((result == [[0], [0], [1], [0], [0], [0], [0], [0]]).all()):
-        control_1 = 0
-        control_2 = 1
-        target = 0
+        Result[place1] = 0
+        Result[place2] = 1
+        Result[place3] = 0
     elif ((result == [[0], [0], [0], [1], [0], [0], [0], [0]]).all()):
-        control_1 = 0
-        control_2 = 1
-        target = 1
+        Result[place1] = 0
+        Result[place2] = 1
+        Result[place3] = 1
     elif ((result == [[0], [0], [0], [0], [1], [0], [0], [0]]).all()):
-        control_1 = 1
-        control_2 = 0
-        target = 0
+        Result[place1] = 1
+        Result[place2] = 0
+        Result[place3] = 0
     elif ((result == [[0], [0], [0], [0], [0], [1], [0], [0]]).all()):
-        control_1 = 1
-        control_2 = 0
-        target = 1
+        Result[place1] = 1
+        Result[place2] = 0
+        Result[place3] = 1
     elif ((result == [[0], [0], [0], [0], [0], [0], [0], [1]]).all()):
-        control_1 = 1
-        control_2 = 1
-        target = 1
+        Result[place1] = 1
+        Result[place2] = 1
+        Result[place3] = 1
     elif ((result == [[0], [0], [0], [0], [0], [0], [1], [0]]).all()):
-        control_1 = 1
-        control_2 = 1
-        target = 0
-    print("经过Toffoli门的转换,控制位：" + str(control_1))
-    print("经过Toffoli门的转换,控制位：" + str(control_2))
-    print("经过Toffoli门的转换,目标位：" + str(target))
-    # print(result)
-    choose()
+        Result[place1] = 1
+        Result[place2] = 1
+        Result[place3] = 0
+    print(Result)
 
-def SWAP():
-    print("用矩阵表示0和1两个状态位")
-    print("1---[[0],\n\t[1]]")
-    print("0---[[1],\n\t[0]]")
-    print("因为SWAP门有三位，两个控制位，一个目标位，所以需要进行张量积运算")
-    control = int(input("请输入SWAP门的第一位控制位:"))
-    target_1 = int(input("请输入SWAP门的第一目标位:"))
-    target_2 = int(input("请输入SWAP门的第二目标位:"))
+def CSWAP(place1,place2,place3):
+    """
+    Result[place1]为控制位
+    Result[place2]，Result[place3]为目标位
+    当Result[place1]为1时，交换Result[place2]，Result[place3]
+    :param place1:
+    :param place2:
+    :param place3:
+    :return:
+    """
+    control = Result[place1]
+    target_1 = Result[place2]
+    target_2 = Result[place3]
     if control == 0:
         control = np.array([[1], [0]])
     elif control == 1:
         control = np.array([[0], [1]])
-
     if target_1 == 0:
         target_1 = np.array([[1], [0]])
     elif target_1 == 1:
         target_1 = np.array([[0], [1]])
-
     if target_2 == 0:
         target_2 = np.array([[1], [0]])
     elif target_2 == 1:
@@ -172,61 +182,40 @@ def SWAP():
     result = np.dot(swap, product)
     # print(result)
     if ((result == [[1], [0], [0], [0], [0], [0], [0], [0]]).all()):  # 000
-        control = 0
-        target_1 = 0
-        target_2 = 0
+        Result[place1] = 0
+        Result[place2] = 0
+        Result[place3] = 0
     elif ((result == [[0], [1], [0], [0], [0], [0], [0], [0]]).all()):  # 001
-        control = 0
-        target_1 = 0
-        target_2 = 1
+        Result[place1] = 0
+        Result[place2] = 0
+        Result[place3] = 1
     elif ((result == [[0], [0], [0], [0], [0], [0], [0], [0]]).all()):  # 010
-        control = 0
-        target_1 = 1
-        target_2 = 0
+        Result[place1] = 0
+        Result[place2] = 1
+        Result[place3] = 0
     elif ((result == [[0], [0], [1], [0], [0], [0], [0], [0]]).all()):  # 011
-        control = 0
-        target_1 = 1
-        target_2 = 1
+        Result[place1] = 0
+        Result[place2] = 1
+        Result[place3] = 1
     elif ((result == [[0], [0], [0], [1], [0], [0], [0], [0]]).all()):  # 100
-        control = 1
-        target_1 = 0
-        target_2 = 0
+        Result[place1] = 1
+        Result[place2] = 0
+        Result[place3] = 0
     elif ((result == [[0], [0], [0], [0], [1], [0], [0], [0]]).all()):  # 101
-        control = 1
-        target_1 = 1
-        target_2 = 0
+        Result[place1] = 1
+        Result[place2] = 1
+        Result[place3] = 0
     elif ((result == [[0], [0], [0], [0], [0], [1], [0], [1]]).all()):  # 110
-        control = 1
-        target_1 = 0
-        target_2 = 1
+        Result[place1] = 1
+        Result[place2] = 0
+        Result[place3] = 1
     elif ((result == [[0], [0], [0], [0], [0], [0], [1], [0]]).all()):  # 111
-        control = 1
-        target_1 = 1
-        target_2 = 1
-    print("经过SWAP门的转换,控制位：" + str(control))
-    print("经过SWAP门的转换,控制位：" + str(target_1))
-    print("经过SWAP门的转换,目标位：" + str(target_2))
-    choose()
+        Result[place1] = 1
+        Result[place2] = 1
+        Result[place3] = 1
 
-def choose():
-    print("-----------------------------------")
-    print("1---NOT门\n" +
-          "2---CNOT门\n" +
-          "3---Toffoli门\n"
-          "4---Swap门\n"
-          "-1--退出")
-    _NO = int(input("请输入你要选择的量子逻辑门："))
-    print("-----------------------------------")
-    if (_NO == 1):
-        NOT()
-    elif (_NO == 2):
-        CNOT()
-    elif (_NO == 3):
-        Toffoli()
-    elif (_NO == 4):
-        SWAP()
-    elif (_NO == -1):
-        return 0
 
 if __name__ == '__main__':
-    choose()
+    NOT(1)
+    CNOT(1, 2)
+    Toffoli(2,1,0)
